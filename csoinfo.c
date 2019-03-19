@@ -82,7 +82,20 @@ const wchar_t * pretty_file_size_unit(s64 filesize)
     return L"TiB";
 }
 
-static int process_cso_file(const wchar_t * fname)
+static void print_file(const wchar_t * fname, s64 filesize, s64 origsize)
+{
+    const double percent = 100.0 * (filesize / (double)(origsize ? origsize : 1));
+
+    wprintf(L"%ls: ", fname);
+    wprintf(L"%llu/%llu, ", filesize, origsize);
+    wprintf(L"%.3f %ls/%.3f %ls, %.2f%%\n",
+        pretty_file_size_adjust(filesize), pretty_file_size_unit(filesize),
+        pretty_file_size_adjust(origsize), pretty_file_size_unit(origsize),
+        percent
+    );
+}
+
+static int process_cso_file(const wchar_t * fname, s64 * totalsize, s64 * totalorig)
 {
     char buff[32];
     size_t readcount;
@@ -113,14 +126,10 @@ static int process_cso_file(const wchar_t * fname)
         {
             const s64 filesize = get_file_size(f);
             const s64 origsize = little_s64(buff + 8);
-            const double percent = 100.0 * (filesize / (double)(origsize ? origsize : 1));
-            wprintf(L"%ls: ", fname);
-            wprintf(L"%llu/%llu, ", filesize, origsize);
-            wprintf(L"%.3f %ls/%.3f %ls, %.2f%%\n",
-                pretty_file_size_adjust(filesize), pretty_file_size_unit(filesize),
-                pretty_file_size_adjust(origsize), pretty_file_size_unit(origsize),
-                percent
-            );
+
+            (*totalsize) += filesize;
+            (*totalorig) += origsize;
+            print_file(fname, filesize, origsize);
         }
     }
 
@@ -130,18 +139,24 @@ static int process_cso_file(const wchar_t * fname)
 
 int wmain(int argc, wchar_t ** argv)
 {
-    int i, ret;
+    int i, ret, printtotal;
+    s64 totalsize = 0;
+    s64 totalorig = 0;
 
     if(argc < 2)
     {
-        wprintf(L"Usage: %ls file.cso ...\n", filepath_to_filename(argv[0]));
+        wprintf(L"Usage: %ls [-t] file.cso ...\n", filepath_to_filename(argv[0]));
         return 1;
     }
 
     ret = 0;
-    for(i = 1; i < argc; ++i)
-        if(process_cso_file(argv[i]))
+    printtotal = (argv[1][0] == L'-' && argv[1][1] == L't' && argv[1][2] == L'\0');
+    for(i = 1 + printtotal; i < argc; ++i)
+        if(process_cso_file(argv[i], &totalsize, &totalorig))
             ret = 1;
+
+    if(printtotal)
+        print_file(L"TOTAL", totalsize, totalorig);
 
     return ret;
 }
