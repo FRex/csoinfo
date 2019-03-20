@@ -49,6 +49,21 @@ static s64 little_s64(const char * buff)
     return ret;
 }
 
+typedef unsigned u32;
+
+static u32 little_u32(const char * buff)
+{
+    u32 ret = 0;
+    const unsigned char * b = (const unsigned char *)buff;
+
+    ret = (ret | b[3]) << 8;
+    ret = (ret | b[2]) << 8;
+    ret = (ret | b[1]) << 8;
+    ret = (ret | b[0]);
+
+    return ret;
+}
+
 static double pretty_file_size_adjust(s64 filesize)
 {
     double ret = (double)filesize;
@@ -82,16 +97,16 @@ const wchar_t * pretty_file_size_unit(s64 filesize)
     return L"TiB";
 }
 
-static void print_file(const wchar_t * fname, s64 filesize, s64 origsize)
+static void print_file(const wchar_t * fname, s64 filesize, s64 origsize, u32 blocksize)
 {
     const double percent = 100.0 * (filesize / (double)(origsize ? origsize : 1));
 
     wprintf(L"%ls: ", fname);
     wprintf(L"%llu/%llu, ", filesize, origsize);
-    wprintf(L"%.3f %ls/%.3f %ls, %.2f%%\n",
+    wprintf(L"%.3f %ls/%.3f %ls, %.2f%%, %u byte blocks\n",
         pretty_file_size_adjust(filesize), pretty_file_size_unit(filesize),
         pretty_file_size_adjust(origsize), pretty_file_size_unit(origsize),
-        percent
+        percent, blocksize
     );
 }
 
@@ -126,10 +141,11 @@ static int process_cso_file(const wchar_t * fname, s64 * totalsize, s64 * totalo
         {
             const s64 filesize = get_file_size(f);
             const s64 origsize = little_s64(buff + 8);
+            const u32 blocksize = little_u32(buff + 16);
 
             (*totalsize) += filesize;
             (*totalorig) += origsize;
-            print_file(fname, filesize, origsize);
+            print_file(fname, filesize, origsize, blocksize);
         }
     }
 
@@ -156,7 +172,7 @@ int wmain(int argc, wchar_t ** argv)
             ret = 1;
 
     if(printtotal)
-        print_file(L"TOTAL", totalsize, totalorig);
+        print_file(L"TOTAL", totalsize, totalorig, 0u);
 
     return ret;
 }
