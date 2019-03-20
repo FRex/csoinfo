@@ -19,8 +19,9 @@ size of the input file itself.
 
 # Invoking and Output
 
-You get as many lines of output as the amount of arguments, no exceptions. All
-the output is to stdout, nothing goes to stderr. Stdin is not read at all either.
+If you run it with no arguments you get a short usage message. Otherwise you get
+as many lines of output as the amount of arguments, no exceptions. All the output
+is to stdout, nothing goes to stderr. Stdin is not read at all either.
 
 If there are any errors then the line format is `filename: error message`.
 
@@ -54,6 +55,11 @@ See examples below.
 
 
 # Examples
+
+```
+$ csoinfo.exe
+Usage: csoinfo.exe [-t] file.cso ...
+```
 
 ```
 $ csoinfo.exe test.cso test.iso
