@@ -131,9 +131,9 @@ static int process_cso_file(const wchar_t * fname, s64 * totalsize, s64 * totalo
     }
     else
     {
-        if(0 != strncmp(buff, "CISO", 4u))
+        if(0 != strncmp(buff, "CISO", 4u) && 0 != strncmp(buff, "ZISO", 4u))
         {
-            wprintf(L"%ls: no CISO 4 magic bytes\n", fname);
+            wprintf(L"%ls: no CISO/ZISO 4 magic bytes\n", fname);
             fclose(f);
             return 1;
         }

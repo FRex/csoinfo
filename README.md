@@ -1,20 +1,20 @@
 # csoinfo
 Small Windows specific (see end of this readme for an explanation) single file C
-program to **print compressed and original size of CSO file (compressed ISO).**
+program to **print compressed and original size of CSO/ZSO file (compressed ISO).**
 
 ```
 $ csoinfo.exe test.cso
 test.cso: 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%
 ```
 
-**If you're looking for a description of the cso format or for a program
-to compress iso to cso and decompress iso from cso then go to
+**If you're looking for a description of the cso/zso format or for a program
+to compress iso to cso/zso and decompress iso from cso/zso then go to
 [unknownbrackets/maxcso](https://github.com/unknownbrackets/maxcso/).**
 
 Go to **releases** on this repo to get a self contained 32 bit Windows exe (made with Pelles C).
 
-It reads the iso size and block size from the cso header and the cso size is the
-size of the input file itself.
+It reads the iso size and block size from the cso/zso header and the cso/zso
+size is the size of the input file itself.
 
 
 # Invoking and Output
@@ -68,10 +68,11 @@ test.iso: no CISO 4 magic bytes
 ```
 
 ```
-$ csoinfo.exe -t test.cso test8192.cso
+$ csoinfo.exe -t test.cso test8192.cso test4096.zso
 test.cso: 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%, 2048 byte blocks
 test8192.cso: 44504019/58433536, 42.442 MiB/55.727 MiB, 76.16%, 8192 byte blocks
-TOTAL: 90600360/116867072, 86.403 MiB/111.453 MiB, 77.52%, 0 byte blocks
+test4096.zso: 49247866/58433536, 46.966 MiB/55.727 MiB, 84.28%, 4096 byte blocks
+TOTAL: 139848226/175300608, 133.370 MiB/167.180 MiB, 79.78%, 0 byte blocks
 ```
 
 ```
