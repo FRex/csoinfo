@@ -94,7 +94,15 @@ static const wchar_t * pretty_file_size_unit(s64 filesize)
     if(filesize < 1024)
         return L"TiB";
 
-    return L"TiB";
+    filesize /= 1024;
+    if(filesize < 1024)
+        return L"PiB";
+
+    filesize /= 1024;
+    if(filesize < 1024)
+        return L"EiB";
+
+    return L"ZiB";
 }
 
 static void print_file(const wchar_t * fname, s64 filesize, s64 origsize, u32 blocksize)
