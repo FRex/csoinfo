@@ -73,7 +73,7 @@ static double pretty_file_size_adjust(s64 filesize)
     return ret;
 }
 
-const wchar_t * pretty_file_size_unit(s64 filesize)
+static const wchar_t * pretty_file_size_unit(s64 filesize)
 {
     if(filesize < 1024)
         return L"bytes";

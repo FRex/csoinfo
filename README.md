@@ -30,7 +30,7 @@ If there are no errors then the line format is
 `csosize` and `isosize` are 'human friendly' units, `percent` is how much
 space does the cso take in comparison to the original iso (e.g. a 3 GiB cso
 made out of 4 GiB iso would have 75% displayed there) and `blocksize` is in
-the form of `XXXX bytes blocks`.
+the form of `XXXX byte blocks`.
 
 The output is very friendly to scripts. The error message won't contain a `/`
 nor `:` so if you split an output line by `:` and then check for presence of `/`
