@@ -58,13 +58,13 @@ See examples below.
 
 ```
 $ csoinfo.exe
-Usage: csoinfo.exe [-t] file.cso ...
+Usage: csoinfo32v19_03_23.exe [-t] file.cso file.zso ...
 ```
 
 ```
 $ csoinfo.exe test.cso test.iso
 test.cso: 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%, 2048 byte blocks
-test.iso: no CISO 4 magic bytes
+test.iso: no CISO or ZISO 4 magic bytes
 ```
 
 ```
@@ -77,7 +77,7 @@ TOTAL: 139848226/175300608, 133.370 MiB/167.180 MiB, 79.78%, 0 byte blocks
 
 ```
 $ csoinfo.exe test.iso nofile.hehe smallfile
-test.iso: no CISO 4 magic bytes
+test.iso: no CISO or ZISO 4 magic bytes
 nofile.hehe: _wfopen failed
 smallfile: fread failed = 2
 ```

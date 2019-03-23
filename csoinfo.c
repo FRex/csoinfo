@@ -142,7 +142,7 @@ static int process_cso_file(const wchar_t * fname, u64 * totalsize, u64 * totalo
     {
         if(0 != strncmp(buff, "CISO", 4u) && 0 != strncmp(buff, "ZISO", 4u))
         {
-            wprintf(L"%ls: no CISO/ZISO 4 magic bytes\n", fname);
+            wprintf(L"%ls: no CISO or ZISO 4 magic bytes\n", fname);
             fclose(f);
             return 1;
         }
@@ -177,7 +177,7 @@ int wmain(int argc, wchar_t ** argv)
 
     if(argc < 2)
     {
-        wprintf(L"Usage: %ls [-t] file.cso ...\n", filepath_to_filename(argv[0]));
+        wprintf(L"Usage: %ls [-t] file.cso file.zso ...\n", filepath_to_filename(argv[0]));
         return 1;
     }
 
