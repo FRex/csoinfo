@@ -18,10 +18,11 @@ static const wchar_t * filepath_to_filename(const wchar_t * path)
 }
 
 typedef unsigned long long u64;
+typedef long long s64;
 
 static u64 get_file_size(FILE * f)
 {
-    u64 ret = 0u;
+    s64 ret = 0;
 
     if(0 == _fseeki64(f, 0, SEEK_END))
         ret = _ftelli64(f);
@@ -29,7 +30,7 @@ static u64 get_file_size(FILE * f)
     if(ret == -1)
         ret = 0;
 
-    return ret;
+    return (u64)ret;
 }
 
 static u64 little_u64(const char * buff)
@@ -151,9 +152,16 @@ static int process_cso_file(const wchar_t * fname, u64 * totalsize, u64 * totalo
             const u64 origsize = little_u64(buff + 8);
             const u32 blocksize = little_u32(buff + 16);
 
-            (*totalsize) += filesize;
-            (*totalorig) += origsize;
-            print_file(fname, filesize, origsize, blocksize);
+            if(filesize != 0u)
+            {
+                (*totalsize) += filesize;
+                (*totalorig) += origsize;
+                print_file(fname, filesize, origsize, blocksize);
+            }
+            else
+            {
+                wprintf(L"%ls: fseek or ftell failed\n", fname);
+            }
         }
     }
 
