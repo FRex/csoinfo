@@ -17,11 +17,11 @@ static const wchar_t * filepath_to_filename(const wchar_t * path)
     return path + lastslash;
 }
 
-typedef long long s64;
+typedef unsigned long long u64;
 
-static s64 get_file_size(FILE * f)
+static u64 get_file_size(FILE * f)
 {
-    s64 ret = 0;
+    u64 ret = 0u;
 
     if(0 == _fseeki64(f, 0, SEEK_END))
         ret = _ftelli64(f);
@@ -32,9 +32,9 @@ static s64 get_file_size(FILE * f)
     return ret;
 }
 
-static s64 little_s64(const char * buff)
+static u64 little_u64(const char * buff)
 {
-    s64 ret = 0;
+    u64 ret = 0u;
     const unsigned char * b = (const unsigned char *)buff;
 
     ret = (ret | b[7]) << 8;
@@ -64,7 +64,7 @@ static u32 little_u32(const char * buff)
     return ret;
 }
 
-static double pretty_file_size_adjust(s64 filesize)
+static double pretty_file_size_adjust(u64 filesize)
 {
     double ret = (double)filesize;
     while(ret > 1024.0)
@@ -73,7 +73,7 @@ static double pretty_file_size_adjust(s64 filesize)
     return ret;
 }
 
-static const wchar_t * pretty_file_size_unit(s64 filesize)
+static const wchar_t * pretty_file_size_unit(u64 filesize)
 {
     if(filesize < 1024)
         return L"bytes";
@@ -105,7 +105,7 @@ static const wchar_t * pretty_file_size_unit(s64 filesize)
     return L"ZiB";
 }
 
-static void print_file(const wchar_t * fname, s64 filesize, s64 origsize, u32 blocksize)
+static void print_file(const wchar_t * fname, u64 filesize, u64 origsize, u32 blocksize)
 {
     const double percent = 100.0 * (filesize / (double)(origsize ? origsize : 1));
 
@@ -118,7 +118,7 @@ static void print_file(const wchar_t * fname, s64 filesize, s64 origsize, u32 bl
     );
 }
 
-static int process_cso_file(const wchar_t * fname, s64 * totalsize, s64 * totalorig)
+static int process_cso_file(const wchar_t * fname, u64 * totalsize, u64 * totalorig)
 {
     char buff[32];
     size_t readcount;
@@ -147,8 +147,8 @@ static int process_cso_file(const wchar_t * fname, s64 * totalsize, s64 * totalo
         }
         else
         {
-            const s64 filesize = get_file_size(f);
-            const s64 origsize = little_s64(buff + 8);
+            const u64 filesize = get_file_size(f);
+            const u64 origsize = little_u64(buff + 8);
             const u32 blocksize = little_u32(buff + 16);
 
             (*totalsize) += filesize;
@@ -164,8 +164,8 @@ static int process_cso_file(const wchar_t * fname, s64 * totalsize, s64 * totalo
 int wmain(int argc, wchar_t ** argv)
 {
     int i, ret, printtotal;
-    s64 totalsize = 0;
-    s64 totalorig = 0;
+    u64 totalsize = 0u;
+    u64 totalorig = 0u;
 
     if(argc < 2)
     {
