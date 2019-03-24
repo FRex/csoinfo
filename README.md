@@ -4,7 +4,7 @@ program to **print compressed and original size of CSO/ZSO file (compressed ISO)
 
 ```
 $ csoinfo.exe test.cso
-test.cso: 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%
+test.cso: cso, 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%, 2048 byte blocks
 ```
 
 **If you're looking for a description of the cso/zso format or for a program
@@ -26,7 +26,8 @@ is to stdout, nothing goes to stderr. Stdin is not read at all either.
 If there are any errors then the line format is `filename: error message`.
 
 If there are no errors then the line format is
-`filename: csobytes/isobytes, csosize/isosize, percent, blocksize` where
+`filename: type, csobytes/isobytes, csosize/isosize, percent, blocksize` where
+`type` is `cso` or `zso` (based on header, regardless of file extension),
 `csosize` and `isosize` are 'human friendly' units, `percent` is how much
 space does the cso take in comparison to the original iso (e.g. a 3 GiB cso
 made out of 4 GiB iso would have 75% displayed there) and `blocksize` is in
@@ -37,16 +38,16 @@ nor `:` so if you split an output line by `:` and then check for presence of `/`
 you can tell if the line is an erorr one or a valid output one. On Windows
 filenames can't contain `:` so any `:` character will do, but on Linux you
 should split by last `:` just in case. You can then split the valid output line
-by `,` and get the four parts: bytes, human readable, percent, block size and
-further split the first two by `/` and strip the fluff text and parse them all.
+by `,` and get the five parts: type, bytes, human readable, percent, block size and
+further split the sizes by `/` and strip the fluff text and parse them all.
 
 If your iso and cso are both under 1 KiB (1024 bytes) then the human readable
 part will read `xxx.000 bytes` (where `xxx` is the correct number) but that's
 so unlikely to ever happen in practice that I didn't bother with that edge case.
 
 If **first** argument is exactly `-t` then it will print a sum total at the
-end in the same format as successfully scanned cso files with name 'TOTAL' and
-blocksize of 0 bytes.
+end in the same format as successfully scanned cso files with name 'TOTAL',
+`type` 'total' and blocksize of 0 bytes.
 If you need to open a file named `-t` then you should pass it as `./-t` or
 as argument other than the first one, but you probably shouldn't store any
 cso files inside a file named `-t` with no extension anyway.
@@ -58,21 +59,21 @@ See examples below.
 
 ```
 $ csoinfo.exe
-Usage: csoinfo32v19_03_23.exe [-t] file.cso file.zso ...
+Usage: csoinfo.exe [-t] file.cso file.zso ...
 ```
 
 ```
 $ csoinfo.exe test.cso test.iso
-test.cso: 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%, 2048 byte blocks
+test.cso: cso, 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%, 2048 byte blocks
 test.iso: no CISO or ZISO 4 magic bytes
 ```
 
 ```
 $ csoinfo.exe -t test.cso test8192.cso test4096.zso
-test.cso: 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%, 2048 byte blocks
-test8192.cso: 44504019/58433536, 42.442 MiB/55.727 MiB, 76.16%, 8192 byte blocks
-test4096.zso: 49247866/58433536, 46.966 MiB/55.727 MiB, 84.28%, 4096 byte blocks
-TOTAL: 139848226/175300608, 133.370 MiB/167.180 MiB, 79.78%, 0 byte blocks
+test.cso: cso, 46096341/58433536, 43.961 MiB/55.727 MiB, 78.89%, 2048 byte blocks
+test8192.cso: cso, 44504019/58433536, 42.442 MiB/55.727 MiB, 76.16%, 8192 byte blocks
+test4096.zso: zso, 49247866/58433536, 46.966 MiB/55.727 MiB, 84.28%, 4096 byte blocks
+TOTAL: total, 139848226/175300608, 133.370 MiB/167.180 MiB, 79.78%, 0 byte blocks
 ```
 
 ```
@@ -84,7 +85,7 @@ smallfile: fread failed = 2
 
 ```
 $ csoinfo.exe just-header.cso
-just-header.cso: 24/58433536, 24.000 bytes/55.727 MiB, 0.00%, 2048 byte blocks
+just-header.cso: cso, 24/58433536, 24.000 bytes/55.727 MiB, 0.00%, 2048 byte blocks
 ```
 
 # Windows specific?

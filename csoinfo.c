@@ -106,11 +106,11 @@ static const wchar_t * pretty_file_size_unit(u64 filesize)
     return L"ZiB";
 }
 
-static void print_file(const wchar_t * fname, u64 filesize, u64 origsize, u32 blocksize)
+static void print_file(const wchar_t * fname, const wchar_t * type, u64 filesize, u64 origsize, u32 blocksize)
 {
     const double percent = 100.0 * (filesize / (double)(origsize ? origsize : 1));
 
-    wprintf(L"%ls: ", fname);
+    wprintf(L"%ls: %ls, ", fname, type);
     wprintf(L"%llu/%llu, ", filesize, origsize);
     wprintf(L"%.3f %ls/%.3f %ls, %.2f%%, %u byte blocks\n",
         pretty_file_size_adjust(filesize), pretty_file_size_unit(filesize),
@@ -154,9 +154,10 @@ static int process_cso_file(const wchar_t * fname, u64 * totalsize, u64 * totalo
 
             if(filesize != 0u)
             {
+                const wchar_t * type = (strncmp(buff, "CISO", 4u) == 0)?L"cso":L"zso";
                 (*totalsize) += filesize;
                 (*totalorig) += origsize;
-                print_file(fname, filesize, origsize, blocksize);
+                print_file(fname, type, filesize, origsize, blocksize);
             }
             else
             {
@@ -188,7 +189,7 @@ int wmain(int argc, wchar_t ** argv)
             ret = 1;
 
     if(printtotal)
-        print_file(L"TOTAL", totalsize, totalorig, 0u);
+        print_file(L"TOTAL", L"total", totalsize, totalorig, 0u);
 
     return ret;
 }
