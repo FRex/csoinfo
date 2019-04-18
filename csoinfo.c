@@ -68,7 +68,7 @@ static u32 little_u32(const char * buff)
 static double pretty_file_size_adjust(u64 filesize)
 {
     double ret = (double)filesize;
-    while(ret > 1024.0)
+    while(ret >= 1024.0)
         ret /= 1024.0;
 
     return ret;
