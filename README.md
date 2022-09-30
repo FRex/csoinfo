@@ -13,6 +13,9 @@ to compress iso to cso/zso and decompress iso from cso/zso then go to
 
 Go to **releases** on this repo to get a self contained 32 bit Windows exe (made with Pelles C).
 
+A Python implementation that functions the same is also available in this repo,
+it should work with Python 2.7 and Python 3.x
+
 It reads the iso size and block size from the cso/zso header and the cso/zso
 size is the size of the input file itself.
 
